@@ -1,4 +1,4 @@
-package com.example.groceriesshop.data.di
+package com.example.groceriesshop.di
 
 import android.app.Application
 import androidx.room.Room
@@ -8,12 +8,12 @@ import com.example.groceriesshop.data.repository.CartRepositoryImpl
 
 interface AppModule {
     val db: CartDatabase
-    val cartRepository:CartRepository
+    val cartRepository: CartRepository
 }
 
 class AppModuleImpl(
     private val application: Application
-):AppModule {
+) : AppModule {
     override val db: CartDatabase by lazy {
         Room.databaseBuilder(
             application,

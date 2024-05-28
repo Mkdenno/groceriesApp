@@ -1,8 +1,8 @@
 package com.example.groceriesshop
 
 import android.app.Application
-import com.example.groceriesshop.data.di.AppModule
-import com.example.groceriesshop.data.di.AppModuleImpl
+import com.example.groceriesshop.di.AppModule
+import com.example.groceriesshop.di.AppModuleImpl
 
 class CartApp:Application() {
 
@@ -13,6 +13,6 @@ class CartApp:Application() {
     override fun onCreate() {
         super.onCreate()
 
-        appModule=AppModuleImpl(this)
+        appModule= AppModuleImpl(this)
     }
 }

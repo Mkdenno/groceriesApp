@@ -1,6 +1,6 @@
 package com.example.groceriesshop.presentation.cart
 
-import Cart
+import com.example.groceriesshop.data.model.Cart
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.groceriesshop.data.repository.CartRepository
@@ -22,7 +22,6 @@ class CartViewModel(
         viewModelScope.launch {
             cartRepository.updateCount(id, itemCount)
         }
-
     }
 
     fun deleteItem(cart: Cart){

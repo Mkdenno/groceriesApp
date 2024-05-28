@@ -1,6 +1,6 @@
 package com.example.groceriesshop.data.repository
 
-import Cart
+import com.example.groceriesshop.data.model.Cart
 import com.example.groceriesshop.data.CartDao
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first

@@ -6,7 +6,9 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -24,7 +26,11 @@ class MainActivity : ComponentActivity() {
         setContent {
             val navController= rememberNavController()
             GroceriesShopTheme {
-                Navigation(navController =navController )
+                Surface(
+                    contentColor = MaterialTheme.colorScheme.background
+                ) {
+                    Navigation(navController =navController )
+                }
             }
         }
     }

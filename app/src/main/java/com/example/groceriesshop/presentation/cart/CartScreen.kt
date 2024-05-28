@@ -1,6 +1,7 @@
 package com.example.groceriesshop.presentation.cart
 
-import Cart
+import android.util.Log
+import com.example.groceriesshop.data.model.Cart
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
@@ -30,35 +32,29 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.groceriesshop.data.repository.ItemCount
-import com.example.groceriesshop.presentation.home.Groceries
-import com.example.groceriesshop.presentation.home.dummyGroceries
-import com.example.groceriesshop.presentation.navigation.Screen
 
 @Composable
 fun CartScreen(
-    modifier: Modifier = Modifier,
     cartViewModel: CartViewModel
 ) {
 
     val cartList by cartViewModel.cartList.collectAsState()
 
+    Log.i("items***", cartList.toString())
 
     LazyColumn(
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = Modifier.fillMaxSize()
     ) {
         items(cartList) { item ->
             GroceryItem(
                 cart = item,
-                onClickSubtract = {cartViewModel.updateItemCount(ItemCount.DECREMENT, item.id)},
-                onClickAdd = {cartViewModel.updateItemCount(ItemCount.INCREMENT, item.id)}
+                onClickSubtract = { cartViewModel.updateItemCount(ItemCount.DECREMENT, item.id) },
+                onClickAdd = { cartViewModel.updateItemCount(ItemCount.INCREMENT, item.id) }
             )
         }
-
-
     }
-
-
 }
 
 @Composable
@@ -67,7 +63,6 @@ fun GroceryItem(
     cart: Cart,
     onClickSubtract: () -> Unit,
     onClickAdd: () -> Unit
-
 ) {
     Row(
         modifier = modifier.fillMaxWidth(),
@@ -79,9 +74,7 @@ fun GroceryItem(
             modifier = Modifier.size(100.dp)
         )
         Spacer(modifier = Modifier.width(8.dp))
-        Column(
-            modifier = Modifier
-        ) {
+        Column {
             Text(
                 text = cart.name,
                 fontSize = 20.sp,
@@ -91,13 +84,17 @@ fun GroceryItem(
                 text = cart.quantity,
                 fontSize = 10.sp
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = cart.price,
                 fontWeight = FontWeight.Bold,
                 fontSize = 20.sp
             )
-
+            Text(
+                text = "Items: ${cart.count}",
+                fontWeight = FontWeight.Bold,
+                fontSize = 20.sp
+            )
         }
 
         Spacer(modifier = Modifier.weight(1f))
@@ -134,10 +131,6 @@ fun GroceryItem(
             ) {
                 Text(text = "+")
             }
-
         }
-
-
     }
-
 }

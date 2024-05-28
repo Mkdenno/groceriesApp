@@ -16,52 +16,46 @@ import com.example.groceriesshop.presentation.home.HomeViewModel
 
 @Composable
 fun Navigation(
-    modifier: Modifier = Modifier,
     navController: NavHostController
-)
-{
-    NavHost(navController =navController , startDestination =Screen.HomeScreen.route ) {
-        composable(route=Screen.HomeScreen.route){
-            val viewModel= viewModel<HomeViewModel>(
+) {
+    NavHost(navController = navController, startDestination = Screen.HomeScreen.route) {
+        composable(route = Screen.HomeScreen.route) {
+            val viewModel = viewModel<HomeViewModel>(
                 factory = viewModelFactoryHelper {
                     HomeViewModel(CartApp.appModule.cartRepository)
                 }
             )
             HomeScreen(
-                onNavigateToCartScreen = { 
-                      navController.navigate(Screen.CartScreen.route)
+                onNavigateToCartScreen = {
+                    navController.navigate(Screen.CartScreen.route)
                 },
-                homeViewModel =viewModel )
-
-
+                homeViewModel = viewModel
+            )
         }
 
-        composable(route=Screen.CartScreen.route){
-            val viewModel= viewModel<CartViewModel>(
-                factory = viewModelFactoryHelper { 
+        composable(route = Screen.CartScreen.route) {
+            val viewModel = viewModel<CartViewModel>(
+                factory = viewModelFactoryHelper {
                     CartViewModel(
                         CartApp.appModule.cartRepository
                     )
                 }
-                
             )
-            
+
             CartScreen(cartViewModel = viewModel)
         }
-
     }
-
-}
-sealed class Screen(val route:String){
-    object HomeScreen:Screen("home_screen")
-    object CartScreen:Screen("cart_screen")
 }
 
-fun<VM: ViewModel> viewModelFactoryHelper(initializer:()-> VM): ViewModelProvider.Factory{
-    return object : ViewModelProvider.Factory{
+sealed class Screen(val route: String) {
+    data object HomeScreen : Screen("home_screen")
+    data object CartScreen : Screen("cart_screen")
+}
+
+fun <VM : ViewModel> viewModelFactoryHelper(initializer: () -> VM): ViewModelProvider.Factory {
+    return object : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             return initializer() as T
         }
-
     }
 }
