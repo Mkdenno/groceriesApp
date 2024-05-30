@@ -22,7 +22,6 @@ import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -103,6 +102,7 @@ val dummyGroceries = listOf(
 @Composable
 fun HomeScreen(
     onNavigateToCartScreen: () -> Unit,
+    onNavigateToDetailsScreen: (Groceries) -> Unit,
     homeViewModel: HomeViewModel
 ) {
 
@@ -150,8 +150,11 @@ fun HomeScreen(
             items(dummyGroceries) { item ->
                 HomeItems(
                     groceries = item,
-                    onItemClick = {
+                    onAddToCartClick = {
                         homeViewModel.addToCart(item.toCart())
+                    },
+                    onItemClick = {
+                        onNavigateToDetailsScreen(item)
                     }
                 )
             }
@@ -163,11 +166,13 @@ fun HomeScreen(
 fun HomeItems(
     modifier: Modifier = Modifier,
     groceries: Groceries,
+    onAddToCartClick: () -> Unit,
     onItemClick: () -> Unit
 ) {
 
     Row(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth()
+            .clickable { onItemClick() },
         verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
@@ -208,16 +213,11 @@ fun HomeItems(
                     color = Color.Green.copy(.5f),
                     modifier = Modifier
                         .clickable {
-                            onItemClick()
+                            onAddToCartClick()
                         }
                 )
-
             }
-
-
         }
-
-
     }
 }
 
