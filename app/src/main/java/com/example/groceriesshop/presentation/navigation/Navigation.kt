@@ -1,5 +1,7 @@
 package com.example.groceriesshop.presentation.navigation
 
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -17,59 +19,64 @@ import com.example.groceriesshop.presentation.home.HomeViewModel
 import com.example.groceriesshop.presentation.item_detail.GroceryDetailScreen
 import kotlinx.serialization.Serializable
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun Navigation(
     navController: NavHostController
 ) {
-    NavHost(navController = navController, startDestination = Screen.HomeScreen) {
-        composable<Screen.HomeScreen>{
-            val viewModel = viewModel<HomeViewModel>(
-                factory = viewModelFactoryHelper {
-                    HomeViewModel(CartApp.appModule.cartRepository)
-                }
-            )
-            HomeScreen(
-                onNavigateToCartScreen = {
-                    navController.navigate(Screen.CartScreen)
-                },
-                homeViewModel = viewModel,
-                onNavigateToDetailsScreen = {
-                    navController.navigate(
-                        Screen.GroceryDetailsScreen(
-                            it.img,
-                            it.name,
-                            it.price,
-                            it.quantity,
-                            it.description
-                        )
-                    )
-                }
-            )
-        }
-        
-        composable<Screen.GroceryDetailsScreen> {
-            val args = it.toRoute<Screen.GroceryDetailsScreen>()
-            GroceryDetailScreen(
-                grocery = Groceries(
-                    args.img,
-                    args.name,
-                    args.price,
-                    args.quantity,
-                    args.description
+    SharedTransitionLayout {
+        NavHost(navController = navController, startDestination = Screen.HomeScreen) {
+            composable<Screen.HomeScreen> {
+                val viewModel = viewModel<HomeViewModel>(
+                    factory = viewModelFactoryHelper {
+                        HomeViewModel(CartApp.appModule.cartRepository)
+                    }
                 )
-            )
-        }
+                HomeScreen(
+                    animatedVisibilityScope = this,
+                    onNavigateToCartScreen = {
+                        navController.navigate(Screen.CartScreen)
+                    },
+                    homeViewModel = viewModel,
+                    onNavigateToDetailsScreen = {
+                        navController.navigate(
+                            Screen.GroceryDetailsScreen(
+                                it.img,
+                                it.name,
+                                it.price,
+                                it.quantity,
+                                it.description
+                            )
+                        )
+                    }
+                )
+            }
 
-        composable<Screen.CartScreen>{
-            val viewModel = viewModel<CartViewModel>(
-                factory = viewModelFactoryHelper {
-                    CartViewModel(
-                        CartApp.appModule.cartRepository
+            composable<Screen.GroceryDetailsScreen> {
+                val args = it.toRoute<Screen.GroceryDetailsScreen>()
+                GroceryDetailScreen(
+                    animatedVisibilityScope = this,
+                    grocery = Groceries(
+                        args.img,
+                        args.name,
+                        args.price,
+                        args.quantity,
+                        args.description
                     )
-                }
-            )
+                )
+            }
 
-            CartScreen(cartViewModel = viewModel)
+            composable<Screen.CartScreen> {
+                val viewModel = viewModel<CartViewModel>(
+                    factory = viewModelFactoryHelper {
+                        CartViewModel(
+                            CartApp.appModule.cartRepository
+                        )
+                    }
+                )
+
+                CartScreen(cartViewModel = viewModel)
+            }
         }
     }
 }

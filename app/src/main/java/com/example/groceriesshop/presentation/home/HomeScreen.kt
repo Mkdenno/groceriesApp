@@ -1,5 +1,9 @@
 package com.example.groceriesshop.presentation.home
 
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -98,9 +102,10 @@ val dummyGroceries = listOf(
     )
 )
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
-fun HomeScreen(
+fun SharedTransitionScope.HomeScreen(
+    animatedVisibilityScope: AnimatedVisibilityScope,
     onNavigateToCartScreen: () -> Unit,
     onNavigateToDetailsScreen: (Groceries) -> Unit,
     homeViewModel: HomeViewModel
@@ -149,6 +154,7 @@ fun HomeScreen(
         ) {
             items(dummyGroceries) { item ->
                 HomeItems(
+                    animatedVisibilityScope = animatedVisibilityScope,
                     groceries = item,
                     onAddToCartClick = {
                         homeViewModel.addToCart(item.toCart())
@@ -162,23 +168,34 @@ fun HomeScreen(
     }
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun HomeItems(
+fun SharedTransitionScope.HomeItems(
     modifier: Modifier = Modifier,
+    animatedVisibilityScope: AnimatedVisibilityScope,
     groceries: Groceries,
     onAddToCartClick: () -> Unit,
     onItemClick: () -> Unit
 ) {
 
     Row(
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier
+            .fillMaxWidth()
             .clickable { onItemClick() },
         verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
             painter = painterResource(id = groceries.img),
             contentDescription = null,
-            modifier = Modifier.size(100.dp)
+            modifier = Modifier
+                .size(100.dp)
+                .sharedElement(
+                    state = rememberSharedContentState(key = "image/${groceries.img}"),
+                    animatedVisibilityScope = animatedVisibilityScope,
+                    boundsTransform = { _, _ ->
+                        tween(durationMillis = 400)
+                    }
+                )
         )
         Spacer(modifier = Modifier.width(8.dp))
         Column(
@@ -189,24 +206,23 @@ fun HomeItems(
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold
             )
-            Text(
-                text = groceries.quantity,
-                fontSize = 10.sp
-            )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = groceries.price,
                 fontWeight = FontWeight.Bold,
                 fontSize = 20.sp
             )
-
         }
 
         Spacer(modifier = Modifier.weight(1f))
 
         Column {
 
-            Text(text = groceries.quantity)
+            Text(
+                text = groceries.quantity,
+                fontSize = 10.sp
+            )
+
             TextButton(onClick = { /*TODO*/ }) {
                 Text(
                     text = "Add To CArt",
